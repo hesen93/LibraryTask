@@ -1,68 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Reflection.Metadata.BlobBuilder;
-
-namespace Example3
+﻿namespace Example3
 {
-	public class Library
-	{
-        
-        List<Book> books = new List<Book>();
-		public int bookLimit;
+    public class Library
+    {
 
-		public int BookLimit
-		{
-			get { return bookLimit; }
-			set 
-			{
-				if (value >= 100)
-					throw new CapacityLimitException("100-den az olmalidir");
-				else
-					bookLimit = value;
-			}
-		}
-		public Library(int bookLimit)
-		{
-            BookLimit = bookLimit;
-		}
-
-		public void AddBook(Book book)
-		{
-			if(books.Count < 100)
-                books.Add(book);
-			else
-                throw new CapacityLimitException("Artiq 99 kitab movcuddur.");
-
-        }
-		public Book GetBookById(int id)
+        private int _bookLimit;
+        public int BookLimit
         {
-			Book book = null;
-            for (int i = 0; i < books.Count; i++)
+            get { return _bookLimit; }
+            set
             {
-                if (books[i].Id == id)
-                    book = books[i];
+                if (value > 100)
+                    throw new CapacityLimitException();
+                else
+                    _bookLimit = value;
             }
-			return book;
-		}
-		public void RemoveById(int id)
-		{
-            Book book = null;
-            for (int i = 0; i < books.Count; i++)
-            {
-				if (books[i].Id == id)
-					book = books[i];
-				
-            }
-			if (book == null)
-				throw new NotFoundException("Bu Id - de kitab movcud deyil");
-			else
-				books.Remove(book);
-			
+        }
+        public List<Book> Books { get; set; } = new();
+
+        public Library(int bookLimit)
+        {
+            BookLimit = bookLimit;
         }
 
-       
+        public void AddBook(Book book)
+        {
+            if (Books.Count <= BookLimit)
+                Books.Add(book);
+            else
+                throw new CapacityLimitException();
+        }
+        public Book GetBookById(int id)  // Books.FirstOrDefault(x => x.Id == id)!;
+        {
+            for (int i = 0; i < Books.Count; i++)
+            {
+                if (Books[i].Id == id)
+                    return Books[i];
+            }
+            throw new NotFoundException($"{id}-li kitab tapilmadi");
+            //return null;
+        }
+
+        public void RemoveById(int id)
+        {
+            var book = GetBookById(id);
+            Books.Remove(book);
+        }
     }
 }

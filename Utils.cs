@@ -15,11 +15,34 @@ namespace Example3
             Id += defaultId;
             return Id;
         }
+
+        public static void Error(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
+
+        public static void Success(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
+
+        public static void Info(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
     }
     public class CapacityLimitException : Exception
     {
-        public CapacityLimitException(string message) : base(message)
+        public string Message { get; set; } = "Kitab limiti asilmisdir";
+        public CapacityLimitException(string message = null)
         {
+            Message ??= message;
         }
     }
     public class NotFoundException : Exception
